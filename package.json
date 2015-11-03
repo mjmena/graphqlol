@@ -1,0 +1,23 @@
+{
+  "name": "grapqlol",
+  "version": "1.0.0",
+  "description": "A GraphQL endpoint for League of Legends data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjmena/graphqlol.git"
+  },
+  "author": "Martin Mena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mjmena/graphqlol/issues"
+  },
+  "homepage": "https://github.com/mjmena/graphqlol#readme",
+  "dependencies": {
+    "hapi": "^11.0.3",
+    "mongoose": "^4.2.4"
+  }
+}
