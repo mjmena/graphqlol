@@ -5,9 +5,15 @@ import {
   GraphQLString,
   GraphQLNonNull,
   GraphQLList
-} from 'graphql';
+}
+from 'graphql';
+import {
+  API_KEY
+}
+from './config.js';
+import fetch from 'node-fetch';
 
-const User = new GraphQLObjectType({
+const Champion = new GraphQLObjectType({
   name: 'Champion',
   fields: () => ({
     id: {
@@ -18,11 +24,11 @@ const User = new GraphQLObjectType({
     },
     title: {
       type: GraphQLString
-    },
+    }
   })
 });
 
-const Query = new GraphQLObjectType({
+const query = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     champion: {
@@ -32,29 +38,20 @@ const Query = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLID)
         }
       },
-      resolve(parent, {id}, {rootValue: {db}}) {
-        return db.get(`
-          SELECT * FROM User WHERE id = $id
-          `, {$id: id});
+      resolve(root, data) {
+        return fetch('https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion/' + data.id + '?champData=info&api_key=' + API_KEY)
+          .then(function(res) {
+            return res.json();
+          }).then(function(json) {
+            return json;
+          });
       }
     },
-    story: {
-      type: Story,
-      args: {
-        id: {
-          type: new GraphQLNonNull(GraphQLID)
-        }
-      },
-      resolve(parent, {id}, {rootValue: {db}}) {
-        return db.get(`
-          SELECT * FROM Story WHERE id = $id
-          `, {$id: id});
-      }
-    }
   })
 });
 
-const Schema = new GraphQLSchema({
-  query: Query
+const schema = new GraphQLSchema({
+  query: query
 });
-export default Schema;
+
+export default schema

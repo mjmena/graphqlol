@@ -1,14 +1,21 @@
 import Hapi from 'hapi';
-import {graphql} from 'graphql';
-import {HOST, PORT} from './config';
-import Schema from './Schema';
+import {
+  graphql
+}
+from 'graphql';
+import {
+  HOST, PORT
+}
+from './config';
+import schema from './schema';
 
-async function graphQLHandler(request, reply) {
-  const {query, variables = {}} = request.payload;
-  const result = await graphql(
-    Schema,
-    query,
-    {
+function graphQLHandler(request, reply) {
+  const {
+    query, variables = {}
+  } = request.payload;
+  const result = graphql(
+    schema,
+    query, {
       db: request.db,
       userId: '1'
     },
@@ -17,25 +24,25 @@ async function graphQLHandler(request, reply) {
   return reply(result);
 }
 
-export default async function runServer() {
-  try {
-    const server = new Hapi.Server();
+const server = new Hapi.Server();
 
-    server.connection({
-      host: HOST,
-      port: PORT
-    });
-    
-    server.route({
-      method: 'POST',
-      path: '/',
-      handler: graphQLHandler
-    });
+server.connection({
+  host: HOST,
+  port: PORT
+});
 
-    server.start();
+server.route({
+  method: 'POST',
+  path: '/',
+  handler: graphQLHandler
+});
 
-    console.log('Server started at ' + server.info.uri);
-  } catch(e) {
-    console.log(e);
+// server.start(() => console.log('Server started at ' + server.info.uri))
+
+graphql(schema, `{
+  champion(id:266) {
+    id,
+    name,
+    title
   }
-}
+}`, {}).then((result) => console.log(result.data));
