@@ -12,6 +12,36 @@ import {
 }
 from './config';
 import fetch from 'node-fetch';
+import {
+  connectionArgs,
+  connectionDefinitions,
+  connectionFromArray,
+  fromGlobalId,
+  globalIdField,
+  mutationWithClientMutationId,
+  nodeDefinitions,
+} from 'graphql-relay';
+
+var {nodeInterface, nodeField} = nodeDefinitions(
+  (globalId) => {
+    var {type, name} = fromGlobalId(globalId);
+    if (type === 'Summoner') {
+      return getSummoner(name);
+    } else {
+      return null;
+    }
+  },
+  (obj) => {
+    if (obj instanceof Summoner) {
+      return Summoner;
+    } else {
+      return null;
+    }
+  }
+);
+
+var {connectionType: summonerConnection} =
+  connectionDefinitions({name: 'Summoner', nodeType: Summoner});
 
 function getChampion(id) {
   console.log("Getting Champion " + id)
@@ -110,6 +140,7 @@ const Summoner = new GraphQLObjectType({
 const query = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
+    node: nodeField,
     summoner: {
       type: Summoner,
       args: {
