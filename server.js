@@ -40,9 +40,15 @@ server.route({
 // server.start(() => console.log('Server started at ' + server.info.uri))
 
 graphql(schema, `{
-  champion(id:266) {
+  summoner(name:\"mjxm\") {
     id,
     name,
-    title
+    enemies{
+      name,
+      title
+    }
   }
-}`, {}).then((result) => console.log(result.data));
+}`, {}).then((result) => {
+  console.log(result)
+  console.log(result.data.summoner.enemies);
+});
